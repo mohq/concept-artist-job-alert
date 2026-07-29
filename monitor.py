@@ -5,26 +5,36 @@ from scrapers.peoplecanfly import get_jobs as get_peoplecanfly_jobs
 from scrapers.zenimax import get_jobs as get_zenimax_jobs
 
 
+SCRAPERS = [
+
+    ("Hasbro", get_hasbro_jobs),
+
+    ("People Can Fly", get_peoplecanfly_jobs),
+
+    ("ZeniMax", get_zenimax_jobs),
+
+]
+
+
 print("Downloading jobs...\n")
-
-
-hasbro_jobs = get_hasbro_jobs()
-print(f"Hasbro: {len(hasbro_jobs)} jobs")
-
-
-peoplecanfly_jobs = get_peoplecanfly_jobs()
-print(f"People Can Fly: {len(peoplecanfly_jobs)} jobs")
-
-
-zenimax_jobs = get_zenimax_jobs()
-print(f"ZeniMax: {len(zenimax_jobs)} jobs")
-
 
 jobs = []
 
-jobs.extend(hasbro_jobs)
-jobs.extend(peoplecanfly_jobs)
-jobs.extend(zenimax_jobs)
+
+for company_name, scraper in SCRAPERS:
+
+    try:
+
+        company_jobs = scraper()
+
+        print(f"{company_name}: {len(company_jobs)} jobs")
+
+        jobs.extend(company_jobs)
+
+    except Exception as e:
+
+        print(f"{company_name}: FAILED")
+        print(f"Reason: {e}\n")
 
 
 print(f"\nTotal jobs downloaded: {len(jobs)}\n")
@@ -35,19 +45,9 @@ matches = 0
 
 for job in jobs:
 
-    title = job["title"]
-    title_lower = title.lower()
+    title = job["title"].lower()
 
-    matched = False
-
-    for keyword in KEYWORDS:
-
-        if keyword.lower() in title_lower:
-            matched = True
-            break
-
-
-    if matched:
+    if any(keyword.lower() in title for keyword in KEYWORDS):
 
         matches += 1
 
