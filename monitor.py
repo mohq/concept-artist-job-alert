@@ -103,7 +103,7 @@ for job in jobs:
 
 print("=" * 60)
 
-print(f"Found {len(matches)} matching Concept Artist jobs.\n")
+print(f"Found {len(matches)} matching Artist jobs.\n")
 
 for job in matches:
 
