@@ -49,10 +49,10 @@ def send_email_alert(matches):
     
     body = "Here are the matching job openings found today:\n\n"
     for job in matches:
-        body += f"Company : {job['company']}\n"
-        body += f"Title   : {job['title']}\n"
-        body += f"Location: {job['location']}\n"
-        body += f"URL     : {job['url']}\n"
+        body += f"Company : {job.get('company', 'Unknown')}\n"
+        body += f"Title   : {job.get('title', 'Untitled')}\n"
+        body += f"Location: {job.get('location', 'Unknown')}\n"
+        body += f"URL     : {job.get('url', '')}\n"
         body += "-" * 40 + "\n"
 
     msg = MIMEMultipart()
@@ -93,7 +93,7 @@ for company_name, scraper in SCRAPERS:
 
         if args.debug:
             for job in company_jobs:
-                print(f"    • {job['title']}")
+                print(f"    • {job.get('title', 'Untitled')}")
     except Exception as e:
         print(f"✗ {company_name}")
         print(f"    {e}")
@@ -103,19 +103,18 @@ print(f"\nTotal jobs downloaded: {len(jobs)}\n")
 matches = []
 
 for job in jobs:
-    title = job["title"].lower()
+    title = job.get("title", "").lower()
     if any(keyword.lower() in title for keyword in KEYWORDS):
         matches.append(job)
 
 print("=" * 60)
-print(f"Found {len(matches)} matching Concept Artist jobs.\n")
+print(f"Found {len(matches)} matching Concept Artist / Lighting jobs.\n")
 
 for job in matches:
-    print(f"Company : {job['company']}")
-    print(f"Title   : {job['title']}")
-    print(f"Location: {job['location']}")
-    print(f"URL     : {job['url']}")
+    print(f"Company : {job.get('company', 'Unknown')}")
+    print(f"Title   : {job.get('title', 'Untitled')}")
+    print(f"Location: {job.get('location', 'Unknown')}")
+    print(f"URL     : {job.get('url', '')}")
     print("=" * 60)
 
-# Automatically trigger email alert if environment variables are present
 send_email_alert(matches)
